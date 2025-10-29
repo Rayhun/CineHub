@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Download {{ movie.title }} - CineHub{% endblock %}
+
+{% block content %}
+  <section class="download-section">
+    <div class="container">
+      <a href="{{ movie.get_absolute_url }}" class="btn btn-outline-danger btn-sm mb-4">
+        <i class="fas fa-arrow-left"></i> Back
+      </a>
+
+      <div class="row">
+        <!-- Movie Info Card -->
+        <div class="col-md-4 mb-4">
+          <div class="movie-info-card">
+            {% if movie.poster_url %}
+              <img src="{{ movie.poster_url }}" alt="{{ movie.title }}" class="img-fluid rounded mb-3">
+            {% else %}
+              <img src="https://via.placeholder.com/300x450?text={{ movie.title|urlencode }}" alt="{{ movie.title }}" class="img-fluid rounded mb-3">
+            {% endif %}
+            <h4>{{ movie.title }}</h4>
+            {% with language_list=movie.language_names first_category=movie.categories.all|first %}
+              <p class="text-muted">
+                {{ movie.release_year }}
+                {% if language_list %}
+                  • {{ language_list|join:", " }}
+                {% endif %}
+                {% if first_category %}
+                  • {{ first_category.name }}
+                {% endif %}
+              </p>
+            {% endwith %}
+            {% if movie.rating %}
+            <div class="rating mb-3">
+              <i class="fas fa-star text-warning"></i> {{ movie.rating }}/10
+            </div>
+            {% endif %}
+            <p class="small">{{ movie.tagline|default:"Download your favorite movie in multiple qualities and formats." }}</p>
+          </div>
+        </div>
+
+        <!-- Download Options -->
+        <div class="col-md-8">
+          <h3 class="mb-4">Select Download Quality</h3>
+
+          <!-- Quality Options -->
+          <div class="quality-options mb-5">
+            {% for option in quality_options %}
+              <div class="quality-card">
+                <div class="quality-header">
+                  <h5>
+                    <i class="fas fa-check-circle text-success"></i> {{ option.label }}
+                  </h5>
+                  {% if option.badge %}
+                    <span class="badge bg-danger">{{ option.badge }}</span>
+                  {% endif %}
+                </div>
+                <div class="quality-details">
+                  {% if option.resolution %}
+                    <p><strong>Resolution:</strong> {{ option.resolution }}</p>
+                  {% endif %}
+                  {% if option.file_size %}
+                    <p><strong>File Size:</strong> {{ option.file_size }}</p>
+                  {% endif %}
+                  {% if option.file_format %}
+                    <p><strong>Format:</strong> {{ option.file_format }}</p>
+                  {% endif %}
+                  {% if option.bitrate %}
+                    <p><strong>Bitrate:</strong> {{ option.bitrate }}</p>
+                  {% endif %}
+                </div>
+                <a href="{{ option.download_url }}" class="btn btn-danger w-100 download-btn">
+                  <i class="fas fa-download"></i> {{ option.cta_text }}
+                </a>
+              </div>
+            {% empty %}
+              <p class="text-muted">Download options will appear here once available.</p>
+            {% endfor %}
+          </div>
+
+          <!-- Server Selection -->
+          <h3 class="mb-4">Select Download Server</h3>
+          <div class="server-options mb-5">
+            {% for server in server_options %}
+              <div class="server-card">
+                <div class="server-header">
+                  <h5>{{ server.name }}</h5>
+                  {% if server.badge and server.badge_variant %}
+                    <span class="badge bg-{{ server.badge_variant }}">{{ server.badge }}</span>
+                  {% endif %}
+                </div>
+                {% if server.description %}
+                  <p class="text-muted">{{ server.description }}</p>
+                {% endif %}
+                <div class="server-stats">
+                  {% if server.speed %}
+                    <span><i class="fas fa-tachometer-alt"></i> Speed: {{ server.speed }}</span>
+                  {% endif %}
+                  {% if server.active_users %}
+                    <span class="ms-3"><i class="fas fa-users"></i> Users: {{ server.active_users }}</span>
+                  {% endif %}
+                </div>
+                <a href="{{ server.url }}" class="btn btn-outline-danger w-100 mt-3">{{ server.cta_text }}</a>
+              </div>
+            {% empty %}
+              <p class="text-muted">Servers are being prepared. Check back soon.</p>
+            {% endfor %}
+          </div>
+
+          <!-- Download Info -->
+          <div class="alert alert-info">
+            <h5><i class="fas fa-info-circle"></i> Download Information</h5>
+            <ul class="mb-0">
+              <li>Estimated download time depends on your internet speed and selected quality</li>
+              <li>All downloads are virus-free and scanned regularly</li>
+              <li>You can pause and resume downloads at any time</li>
+              <li>For best experience, use a download manager</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

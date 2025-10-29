@@ -1,0 +1,29 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{% url 'movies:home' %}">
+      <i class="fas fa-film text-danger"></i> CineHub
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% with active=active_page|default:'' %}
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link {% if active == 'home' %}active{% endif %}" href="{% url 'movies:home' %}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if active == 'search' %}active{% endif %}" href="{% url 'movies:search' %}">Search</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'movies:home' %}#trending">Trending</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'movies:home' %}#latest">Latest</a>
+        </li>
+      </ul>
+      {% endwith %}
+    </div>
+  </div>
+</nav>

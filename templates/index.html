@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}CineHub - Movie Download{% endblock %}
+
+{% block content %}
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="container">
+      <div class="search-wrapper">
+        <form action="{% url 'movies:search' %}" method="get" class="d-flex w-100">
+          <input type="text" name="q" class="form-control search-input" placeholder="Search movies, series, anime..." value="{{ request.GET.q }}">
+          <button class="btn btn-danger search-btn" type="submit"><i class="fas fa-search"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Banner -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h1>Welcome to CineHub</h1>
+      <p>Download your favorite movies, series, and anime</p>
+      <a href="{% url 'movies:search' %}" class="btn btn-danger btn-lg">Explore Now</a>
+    </div>
+  </section>
+
+  <!-- Category Filter -->
+  <div class="category-section">
+    <div class="container">
+      <div class="category-filter">
+        <a class="category-btn active" href="{% url 'movies:search' %}">All</a>
+        {% for category in categories %}
+          <a class="category-btn" href="{% url 'movies:search' %}?categories={{ category.slug }}">{{ category.name }}</a>
+        {% empty %}
+          <span class="text-muted">No categories yet.</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Movies -->
+  <section class="movies-section" id="trending">
+    <div class="container">
+      <h2 class="section-title">Trending Now</h2>
+      <div class="row g-4">
+        {% for movie in trending_movies %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if movie.poster_url %}
+                  <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                {% else %}
+                  <img src="https://via.placeholder.com/300x450?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
+                {% endif %}
+                <div class="movie-overlay">
+                  <a href="{{ movie.get_absolute_url }}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+                {% if movie.quality %}
+                  <span class="quality-badge">{{ movie.get_quality_display }}</span>
+                {% endif %}
+              </div>
+              <div class="movie-info">
+                <h5>{{ movie.title }}</h5>
+                {% with language_list=movie.language_names %}
+                  <p class="movie-meta">
+                    <span class="year">{{ movie.release_year }}</span>
+                    {% if language_list %}
+                      <span class="language">{{ language_list|join:", " }}</span>
+                    {% endif %}
+                  </p>
+                {% endwith %}
+                {% if movie.rating %}
+                  <div class="rating">
+                    <i class="fas fa-star text-warning"></i> {{ movie.rating }}/10
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No trending movies to display right now.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Uploads -->
+  <section class="movies-section" id="latest">
+    <div class="container">
+      <h2 class="section-title">Latest Uploads</h2>
+      <div class="row g-4">
+        {% for movie in latest_movies %}
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="movie-card">
+              <div class="movie-poster">
+                {% if movie.poster_url %}
+                  <img src="{{ movie.poster_url }}" alt="{{ movie.title }}">
+                {% else %}
+                  <img src="https://via.placeholder.com/300x450?text={{ movie.title|urlencode }}" alt="{{ movie.title }}">
+                {% endif %}
+                <div class="movie-overlay">
+                  <a href="{{ movie.get_absolute_url }}" class="btn btn-danger btn-sm">
+                    <i class="fas fa-info-circle"></i> Details
+                  </a>
+                </div>
+                {% if movie.quality %}
+                  <span class="quality-badge">{{ movie.get_quality_display }}</span>
+                {% endif %}
+              </div>
+              <div class="movie-info">
+                <h5>{{ movie.title }}</h5>
+                {% with language_list=movie.language_names %}
+                  <p class="movie-meta">
+                    <span class="year">{{ movie.release_year }}</span>
+                    {% if language_list %}
+                      <span class="language">{{ language_list|join:", " }}</span>
+                    {% endif %}
+                  </p>
+                {% endwith %}
+                {% if movie.rating %}
+                  <div class="rating">
+                    <i class="fas fa-star text-warning"></i> {{ movie.rating }}/10
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p class="text-muted">No recent uploads available yet.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
