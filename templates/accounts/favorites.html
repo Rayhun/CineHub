@@ -1,57 +1,55 @@
 {% extends "accounts/base-profile.html" %}
 
 {% block profile %}
-<!-- Account Settings Tab -->
-<div class="profile-card">
-  <h3>Favorite Movies</h3>
-  <div class="row g-4">
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="movie-card">
-        <div class="movie-poster">
-          <img src="https://via.placeholder.com/300x450?text=Movie+1" alt="Movie 1">
-          <div class="movie-overlay">
-            <a href="movie-details.html?id=1" class="btn btn-danger btn-sm">
-              <i class="fas fa-info-circle"></i> Details
-            </a>
+<div class="profile-card p-4">
+  <h3 class="mb-4">Favorite Movies</h3>
+  {% if favorites %}
+    <div class="row g-4">
+      {% for favorite in favorites %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <div class="movie-card h-100">
+            <div class="movie-poster">
+              {% if favorite.movie.poster_url %}
+                <img src="{{ favorite.movie.poster_url }}" alt="{{ favorite.movie.title }}">
+              {% else %}
+                <img src="https://via.placeholder.com/300x450?text={{ favorite.movie.title|urlencode }}" alt="{{ favorite.movie.title }}">
+              {% endif %}
+              <div class="movie-overlay">
+                <a href="{{ favorite.movie.get_absolute_url }}" class="btn btn-danger btn-sm">
+                  <i class="fas fa-info-circle"></i> Details
+                </a>
+              </div>
+              {% if favorite.movie.quality %}
+                <span class="quality-badge">{{ favorite.movie.get_quality_display }}</span>
+              {% endif %}
+            </div>
+            <div class="movie-info">
+              <h5>{{ favorite.movie.title }}</h5>
+              <p class="movie-meta">
+                <span class="year">{{ favorite.movie.release_year }}</span>
+                {% with languages=favorite.movie.language_names %}
+                  {% if languages %}
+                    <span class="language">{{ languages|join:", " }}</span>
+                  {% endif %}
+                {% endwith %}
+              </p>
+              {% if favorite.movie.rating %}
+                <div class="rating">
+                  <i class="fas fa-star text-warning"></i> {{ favorite.movie.rating }}/10
+                </div>
+              {% endif %}
+              <form method="post" class="mt-3">
+                {% csrf_token %}
+                <input type="hidden" name="movie_id" value="{{ favorite.movie.id }}">
+                <button type="submit" class="btn btn-sm btn-outline-danger w-100">Remove</button>
+              </form>
+            </div>
           </div>
-          <span class="quality-badge">HD</span>
         </div>
-        <div class="movie-info">
-          <h5>The Matrix</h5>
-          <p class="movie-meta">
-            <span class="year">1999</span>
-            <span class="language">English</span>
-          </p>
-          <div class="rating">
-            <i class="fas fa-star text-warning"></i> 8.7/10
-          </div>
-        </div>
-      </div>
+      {% endfor %}
     </div>
-
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="movie-card">
-        <div class="movie-poster">
-          <img src="https://via.placeholder.com/300x450?text=Movie+2" alt="Movie 2">
-          <div class="movie-overlay">
-            <a href="movie-details.html?id=2" class="btn btn-danger btn-sm">
-              <i class="fas fa-info-circle"></i> Details
-            </a>
-          </div>
-          <span class="quality-badge">4K</span>
-        </div>
-        <div class="movie-info">
-          <h5>Inception</h5>
-          <p class="movie-meta">
-            <span class="year">2010</span>
-            <span class="language">English</span>
-          </p>
-          <div class="rating">
-            <i class="fas fa-star text-warning"></i> 8.8/10
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% else %}
+    <p class="text-muted mb-0">You haven't added any favourites yet.</p>
+  {% endif %}
 </div>
 {% endblock %}

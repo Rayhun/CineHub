@@ -1,20 +1,71 @@
 {% extends "accounts/base-profile.html" %}
 
 {% block profile %}
-<!-- Account Settings Tab -->
-<div class="profile-card">
-  <h3>Subscription Plan</h3>
-  <div class="subscription-info">
+<div class="profile-card p-4">
+  <h3 class="mb-4">Subscription Plan</h3>
+
+  <div class="subscription-info mb-4">
     <div class="subscription-badge">
-      <i class="fas fa-crown text-warning"></i> Premium Plus
+      <i class="fas fa-crown text-warning"></i>
+      {% if subscription.plan %}
+        {{ subscription.plan.title }}
+      {% else %}
+        No Plan Selected
+      {% endif %}
     </div>
-    <p class="mt-3"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
-    <p><strong>Renewal Date:</strong> January 15, 2025</p>
-    <p><strong>Price:</strong> $9.99/month</p>
-    <div class="mt-4">
-      <button class="btn btn-danger me-2">Upgrade Plan</button>
-      <button class="btn btn-outline-danger">Cancel Subscription</button>
+    <p class="mt-3"><strong>Status:</strong> <span class="badge {% if subscription.status == 'active' %}bg-success{% elif subscription.status == 'cancelled' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ subscription.get_status_display }}</span></p>
+    {% if subscription.renewal_date %}
+      <p><strong>Renewal Date:</strong> {{ subscription.renewal_date|date:"M d, Y" }}</p>
+    {% endif %}
+    {% if subscription.plan %}
+      <p><strong>Price:</strong> {{ subscription.plan.currency }}{{ subscription.plan.price|floatformat:2 }}{{ subscription.plan.billing_period }}</p>
+    {% endif %}
+  </div>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <h5>Switch Plan</h5>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="change_plan">
+        <div class="mb-3">
+          {{ plan_form.plan.label_tag }}
+          {{ plan_form.plan }}
+          {% for error in plan_form.plan.errors %}
+            <div class="text-danger small">{{ error }}</div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-danger">Update Plan</button>
+      </form>
+    </div>
+    <div class="col-md-6">
+      <h5>Available Plans</h5>
+      <ul class="list-group small">
+        {% for plan in plans %}
+          <li class="list-group-item d-flex justify-content-between align-items-center {% if subscription.plan == plan %}active{% endif %}">
+            <span>
+              <strong>{{ plan.title }}</strong>
+              {% if plan.subtitle %}<br><span class="text-muted">{{ plan.subtitle }}</span>{% endif %}
+            </span>
+            <span class="badge bg-light text-dark">{{ plan.currency }}{{ plan.price|floatformat:2 }}{{ plan.billing_period }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item text-muted">No plans available.</li>
+        {% endfor %}
+      </ul>
     </div>
   </div>
+
+  <hr class="my-4">
+
+  {% if subscription.plan %}
+    <form method="post" class="d-inline">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="cancel_subscription">
+      <button type="submit" class="btn btn-outline-danger">Cancel Subscription</button>
+    </form>
+  {% else %}
+    <p class="text-muted mb-0">Choose a plan above to unlock premium features.</p>
+  {% endif %}
 </div>
 {% endblock %}

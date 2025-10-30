@@ -1,50 +1,33 @@
 {% extends "accounts/base-profile.html" %}
 
 {% block profile %}
-<div class="profile-card">
-  <h3>Download History</h3>
-  <div class="history-list">
-    <div class="history-item">
-      <div class="history-poster">
-        <img src="https://via.placeholder.com/80x120" alt="Movie">
-      </div>
-      <div class="history-info">
-        <h5>The Matrix</h5>
-        <p>Downloaded on: Dec 20, 2024</p>
-        <p>Quality: 1080p HD</p>
-      </div>
-      <div class="history-action">
-        <button class="btn btn-sm btn-danger">Download Again</button>
-      </div>
+<div class="profile-card p-4">
+  <h3 class="mb-4">Download History</h3>
+  {% if downloads %}
+    <div class="history-list">
+      {% for item in downloads %}
+        <div class="history-item">
+          <div class="history-poster">
+            {% if item.movie.poster_url %}
+              <img src="{{ item.movie.poster_url }}" alt="{{ item.movie.title }}">
+            {% else %}
+              <img src="https://via.placeholder.com/80x120?text={{ item.movie.title|urlencode }}" alt="{{ item.movie.title }}">
+            {% endif %}
+          </div>
+          <div class="history-info">
+            <h5>{{ item.movie.title }}</h5>
+            <p>Downloaded on: {{ item.downloaded_at|date:"M d, Y" }}</p>
+            {% if item.quality %}<p>Quality: {{ item.get_quality_display }}</p>{% endif %}
+            {% if item.file_size %}<p>File Size: {{ item.file_size }}</p>{% endif %}
+          </div>
+          <div class="history-action">
+            <a class="btn btn-sm btn-danger" href="{{ item.movie.get_download_url }}">Download Again</a>
+          </div>
+        </div>
+      {% endfor %}
     </div>
-
-    <div class="history-item">
-      <div class="history-poster">
-        <img src="https://via.placeholder.com/80x120" alt="Movie">
-      </div>
-      <div class="history-info">
-        <h5>Inception</h5>
-        <p>Downloaded on: Dec 18, 2024</p>
-        <p>Quality: 4K Ultra HD</p>
-      </div>
-      <div class="history-action">
-        <button class="btn btn-sm btn-danger">Download Again</button>
-      </div>
-    </div>
-
-    <div class="history-item">
-      <div class="history-poster">
-        <img src="https://via.placeholder.com/80x120" alt="Movie">
-      </div>
-      <div class="history-info">
-        <h5>Interstellar</h5>
-        <p>Downloaded on: Dec 15, 2024</p>
-        <p>Quality: 1080p HD</p>
-      </div>
-      <div class="history-action">
-        <button class="btn btn-sm btn-danger">Download Again</button>
-      </div>
-    </div>
-  </div>
+  {% else %}
+    <p class="text-muted mb-0">You haven't downloaded any movies yet.</p>
+  {% endif %}
 </div>
 {% endblock %}

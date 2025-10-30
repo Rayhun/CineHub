@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserCreationForm
 
 from payments.models import Plan
 
@@ -122,3 +122,39 @@ class ProfileForm(forms.ModelForm):
         self.fields["current_plan"].queryset = Plan.objects.filter(is_active=True)
         self.fields["current_plan"].required = False
         self.fields["current_plan"].empty_label = "Select a plan"
+
+
+class PasswordUpdateForm(PasswordChangeForm):
+    """Password form styled with bootstrap classes."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs.setdefault("class", "form-control")
+            field.widget.attrs.setdefault("placeholder", field.label)
+
+
+class PlanSelectionForm(forms.Form):
+    plan = forms.ModelChoiceField(
+        queryset=Plan.objects.none(),
+        empty_label="Select a plan",
+        widget=forms.Select(attrs={"class": "form-select"}),
+        required=False,
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["plan"].queryset = Plan.objects.filter(is_active=True)
+
+
+class AccountDeleteForm(forms.Form):
+    confirmation = forms.CharField(
+        label="Type DELETE to confirm",
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Type DELETE"}),
+    )
+
+    def clean_confirmation(self):
+        value = self.cleaned_data["confirmation"].strip().lower()
+        if value != "delete":
+            raise forms.ValidationError("Please type DELETE to confirm account removal.")
+        return value
