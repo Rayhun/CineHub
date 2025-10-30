@@ -1,0 +1,108 @@
+{% extends "accounts/base-profile.html" %}
+
+{% block profile %}
+<div class="profile-card p-4 mb-4">
+  <h3 class="mb-4">Personal Information</h3>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="{{ user_form.first_name.id_for_label }}" class="form-label">First Name</label>
+        {{ user_form.first_name }}
+        {% for error in user_form.first_name.errors %}
+          <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="{{ user_form.last_name.id_for_label }}" class="form-label">Last Name</label>
+        {{ user_form.last_name }}
+        {% for error in user_form.last_name.errors %}
+          <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ user_form.email.id_for_label }}" class="form-label">Email Address</label>
+      {{ user_form.email }}
+      {% for error in user_form.email.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label for="{{ profile_form.phone_number.id_for_label }}" class="form-label">Phone Number</label>
+        {{ profile_form.phone_number }}
+        {% for error in profile_form.phone_number.errors %}
+          <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="{{ profile_form.current_plan.id_for_label }}" class="form-label">Subscription Plan</label>
+        {{ profile_form.current_plan }}
+        {% for error in profile_form.current_plan.errors %}
+          <div class="text-danger small">{{ error }}</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ profile_form.bio.id_for_label }}" class="form-label">Bio</label>
+      {{ profile_form.bio }}
+      {% for error in profile_form.bio.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <div class="mb-3">
+      <label for="{{ profile_form.avatar.id_for_label }}" class="form-label">Avatar</label>
+      {{ profile_form.avatar }}
+      {% for error in profile_form.avatar.errors %}
+        <div class="text-danger small">{{ error }}</div>
+      {% endfor %}
+    </div>
+
+    <hr class="my-4">
+    <h5 class="mb-3">Notifications</h5>
+    <div class="form-check form-switch mb-3">
+      {{ profile_form.email_notifications }}
+      <label class="form-check-label" for="{{ profile_form.email_notifications.id_for_label }}">Email Notifications</label>
+    </div>
+    <div class="form-check form-switch mb-3">
+      {{ profile_form.sms_notifications }}
+      <label class="form-check-label" for="{{ profile_form.sms_notifications.id_for_label }}">SMS Notifications</label>
+    </div>
+    <div class="form-check form-switch mb-4">
+      {{ profile_form.promo_notifications }}
+      <label class="form-check-label" for="{{ profile_form.promo_notifications.id_for_label }}">Promotional Emails</label>
+    </div>
+
+    <button type="submit" class="btn btn-danger">Save Changes</button>
+  </form>
+</div>
+
+<div class="profile-card p-4">
+  <h3 class="mb-3">Current Plans</h3>
+  <div class="row g-3">
+    {% for plan in plans %}
+      <div class="col-md-6">
+        <div class="border rounded p-3 h-100 {% if profile_form.instance.current_plan == plan %}border-danger{% endif %}">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-1">{{ plan.title }}</h5>
+            <span class="badge bg-light text-dark">{{ plan.currency }}{{ plan.price|floatformat:2 }}{{ plan.billing_period }}</span>
+          </div>
+          {% if plan.subtitle %}
+            <p class="text-light mb-2">{{ plan.subtitle }}</p>
+          {% endif %}
+          <a href="{% url 'payments:plan' %}" class="small btn btn-sm btn-danger">View details</a>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <p class="text-muted mb-0">No plans available.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,9 +1,9 @@
 from django.urls import path
 
-from . import views
+from .views import SubscriptionView
 
 app_name = "payments"
 
 urlpatterns = [
-    path("plan/", views.Subscription.as_view(), name="plan"),
+    path("plan/", SubscriptionView.as_view(), name="plan"),
 ]

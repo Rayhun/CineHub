@@ -1,0 +1,33 @@
+{% extends "accounts/base-profile.html" %}
+
+{% block profile %}
+<!-- Account Settings Tab -->
+  <div class="profile-card">
+    <h3>Account Settings</h3>
+    <div class="settings-group">
+      <h5>Change Password</h5>
+      <form id="passwordForm">
+        <div class="mb-3">
+          <label for="current-pwd" class="form-label">Current Password</label>
+          <input type="password" class="form-control" id="current-pwd">
+        </div>
+        <div class="mb-3">
+          <label for="new-pwd" class="form-label">New Password</label>
+          <input type="password" class="form-control" id="new-pwd">
+        </div>
+        <div class="mb-3">
+          <label for="confirm-pwd" class="form-label">Confirm Password</label>
+          <input type="password" class="form-control" id="confirm-pwd">
+        </div>
+        <button type="submit" class="btn btn-danger">Update Password</button>
+      </form>
+    </div>
+
+    <hr class="border-secondary my-4">
+
+    <div class="settings-group">
+      <h5>Danger Zone</h5>
+      <button class="btn btn-outline-danger">Delete Account</button>
+    </div>
+  </div>
+{% endblock %}

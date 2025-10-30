@@ -1,0 +1,20 @@
+{% extends "accounts/base-profile.html" %}
+
+{% block profile %}
+<!-- Account Settings Tab -->
+<div class="profile-card">
+  <h3>Subscription Plan</h3>
+  <div class="subscription-info">
+    <div class="subscription-badge">
+      <i class="fas fa-crown text-warning"></i> Premium Plus
+    </div>
+    <p class="mt-3"><strong>Status:</strong> <span class="badge bg-success">Active</span></p>
+    <p><strong>Renewal Date:</strong> January 15, 2025</p>
+    <p><strong>Price:</strong> $9.99/month</p>
+    <div class="mt-4">
+      <button class="btn btn-danger me-2">Upgrade Plan</button>
+      <button class="btn btn-outline-danger">Cancel Subscription</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

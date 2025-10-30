@@ -1,83 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}CineHub - Movie Download{% endblock %}
+{% block title %}CineHub Plans{% endblock %}
 
 {% block content %}
   <!-- Pricing Plans -->
   <section class="pricing-section">
     <div class="container">
       <div class="row g-4">
-        <div class="col-md-6 col-lg-4">
-          <div class="pricing-card">
-            <div class="pricing-header">
-              <h3>Basic</h3>
-              <p class="pricing-desc">Perfect for casual viewers</p>
+        {% for plan in plans %}
+          <div class="col">
+            <div class="pricing-card {% if plan.is_recommended %}featured{% endif %}">
+              {% if plan.badge_text %}
+                <div class="pricing-badge">{{ plan.badge_text }}</div>
+              {% endif %}
+              <div class="pricing-header">
+                <h3>{{ plan.title }}</h3>
+                {% if plan.subtitle %}
+                  <p class="pricing-desc">{{ plan.subtitle }}</p>
+                {% endif %}
+              </div>
+              <div class="pricing-price">
+                <span class="currency">{{ plan.currency }}</span>
+                <span class="amount">{{ plan.price|floatformat:2 }}</span>
+                <span class="period">{{ plan.billing_period }}</span>
+              </div>
+              <ul class="pricing-features">
+                {% for assignment in plan.feature_assignments.all %}
+                  <li>
+                    {% if assignment.is_included %}
+                      <i class="fas fa-check text-success"></i>
+                    {% else %}
+                      <i class="fas fa-times text-muted"></i>
+                    {% endif %}
+                    {{ assignment.feature.name }}
+                  </li>
+                {% empty %}
+                  <li><i class="fas fa-info-circle text-secondary"></i> Feature list coming soon.</li>
+                {% endfor %}
+              </ul>
+              <button class="btn {% if plan.is_recommended %}btn-danger{% else %}btn-outline-danger{% endif %} w-100">
+                {{ plan.button_text }}
+              </button>
             </div>
-            <div class="pricing-price">
-              <span class="currency">$</span>
-              <span class="amount">4.99</span>
-              <span class="period">/month</span>
-            </div>
-            <ul class="pricing-features">
-              <li><i class="fas fa-check text-success"></i> HD Quality (720p)</li>
-              <li><i class="fas fa-check text-success"></i> 1 Device</li>
-              <li><i class="fas fa-check text-success"></i> Ad-Supported</li>
-              <li><i class="fas fa-times text-muted"></i> Offline Downloads</li>
-              <li><i class="fas fa-times text-muted"></i> 4K Quality</li>
-              <li><i class="fas fa-times text-muted"></i> Priority Support</li>
-            </ul>
-            <button class="btn btn-outline-danger w-100">Choose Plan</button>
           </div>
-        </div>
-
-        <!-- Standard Plan -->
-        <div class="col-md-6 col-lg-4">
-          <div class="pricing-card featured">
-            <div class="pricing-badge">Most Popular</div>
-            <div class="pricing-header">
-              <h3>Standard</h3>
-              <p class="pricing-desc">Best for most users</p>
+        {% empty %}
+          <div class="col-12">
+            <div class="alert alert-info text-center">
+              Subscription plans are not available yet. Please check back later.
             </div>
-            <div class="pricing-price">
-              <span class="currency">$</span>
-              <span class="amount">7.99</span>
-              <span class="period">/month</span>
-            </div>
-            <ul class="pricing-features">
-              <li><i class="fas fa-check text-success"></i> Full HD Quality (1080p)</li>
-              <li><i class="fas fa-check text-success"></i> 2 Devices</li>
-              <li><i class="fas fa-check text-success"></i> Ad-Free</li>
-              <li><i class="fas fa-check text-success"></i> Offline Downloads</li>
-              <li><i class="fas fa-times text-muted"></i> 4K Quality</li>
-              <li><i class="fas fa-times text-muted"></i> Priority Support</li>
-            </ul>
-            <button class="btn btn-danger w-100">Choose Plan</button>
           </div>
-        </div>
-
-        <!-- Premium Plan -->
-        <div class="col-md-6 col-lg-4">
-          <div class="pricing-card">
-            <div class="pricing-header">
-              <h3>Premium Plus</h3>
-              <p class="pricing-desc">Ultimate experience</p>
-            </div>
-            <div class="pricing-price">
-              <span class="currency">$</span>
-              <span class="amount">9.99</span>
-              <span class="period">/month</span>
-            </div>
-            <ul class="pricing-features">
-              <li><i class="fas fa-check text-success"></i> 4K Ultra HD Quality</li>
-              <li><i class="fas fa-check text-success"></i> 4 Devices</li>
-              <li><i class="fas fa-check text-success"></i> Ad-Free</li>
-              <li><i class="fas fa-check text-success"></i> Offline Downloads</li>
-              <li><i class="fas fa-check text-success"></i> 4K Quality</li>
-              <li><i class="fas fa-check text-success"></i> 24/7 Priority Support</li>
-            </ul>
-            <button class="btn btn-outline-danger w-100">Choose Plan</button>
-          </div>
-        </div>
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -150,54 +122,22 @@
     <div class="container">
       <h2 class="section-title">Frequently Asked Questions</h2>
       <div class="accordion" id="faqAccordion">
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-              Can I change my plan anytime?
-            </button>
-          </h2>
-          <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-            <div class="accordion-body">
-              Yes, you can upgrade or downgrade your plan at any time. Changes will take effect on your next billing cycle.
+        {% for faq in faqs %}
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ forloop.counter }}">
+                {{ faq.question }}
+              </button>
+            </h2>
+            <div id="faq{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                {{ faq.answer }}
+              </div>
             </div>
           </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-              Is there a free trial?
-            </button>
-          </h2>
-          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-            <div class="accordion-body">
-              Yes, we offer a 7-day free trial for new users. No credit card required to start.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-              What payment methods do you accept?
-            </button>
-          </h2>
-          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-            <div class="accordion-body">
-              We accept all major credit cards, PayPal, and digital wallets like Apple Pay and Google Pay.
-            </div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-              Can I cancel anytime?
-            </button>
-          </h2>
-          <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-            <div class="accordion-body">
-              Yes, you can cancel your subscription anytime without any penalties. Your access will continue until the end of your billing period.
-            </div>
-          </div>
-        </div>
+        {% empty %}
+          <div class="text-center text-muted">No frequently asked questions yet.</div>
+        {% endfor %}
       </div>
     </div>
   </section>

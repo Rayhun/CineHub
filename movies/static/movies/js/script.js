@@ -168,24 +168,6 @@ if (signupForm) {
   })
 }
 
-// Profile Tab Navigation
-document.querySelectorAll(".profile-menu-item").forEach((item) => {
-  item.addEventListener("click", function (e) {
-    e.preventDefault()
-    const tabId = this.getAttribute("data-tab")
-
-    // Remove active class from all items and tabs
-    document.querySelectorAll(".profile-menu-item").forEach((i) => i.classList.remove("active"))
-    document.querySelectorAll(".profile-tab").forEach((tab) => tab.classList.remove("active"))
-
-    // Add active class to clicked item and corresponding tab
-    this.classList.add("active")
-    document.getElementById(tabId).classList.add("active")
-
-    console.log("[v0] Profile tab switched to:", tabId)
-  })
-})
-
 // Profile Form Submission
 const profileForm = document.getElementById("profileForm")
 if (profileForm) {

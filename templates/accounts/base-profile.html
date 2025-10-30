@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Your Profile - CineHub{% endblock %}
+
+{% block content %}
+  <section class="profile-section py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 mb-4">
+          <div class="profile-sidebar text-center p-4">
+            <div class="profile-avatar mb-3">
+              {% if request.user.profile.avatar %}
+                <img src="{{ request.user.profile.avatar.url }}" alt="{{ request.user.get_full_name|default:request.user.username }}" class="img-fluid rounded-circle">
+              {% else %}
+                <img src="https://via.placeholder.com/150" alt="Avatar" class="img-fluid rounded-circle">
+              {% endif %}
+            </div>
+            <h4 class="profile-name">{{ request.user.get_full_name|default:request.user.username }}</h4>
+            <p class="profile-email text-light">{{ request.user.email }}</p>
+            <div class="profile-menu">
+              <a href="{% url 'core:profile' %}" class="profile-menu-item {% if request.resolver_match.url_name == 'profile' %}active{% endif %}">
+                <i class="fas fa-user"></i> Profile Info
+              </a>
+              <a href="{% url 'core:settings' %}" class="profile-menu-item {% if request.resolver_match.url_name == 'settings' %}active{% endif %}">
+                <i class="fas fa-cog"></i> Account Settings
+              </a>
+              <a href="{% url 'core:subscription' %}" class="profile-menu-item">
+                <i class="fas fa-crown"></i> Subscription
+              </a>
+              <a href="{% url 'core:download_history' %}" class="profile-menu-item">
+                <i class="fas fa-history"></i> Download History
+              </a>
+              <a href="{% url 'core:favorites' %}" class="profile-menu-item">
+                <i class="fas fa-heart"></i> Favorites
+              </a>
+              <a href="/" class="profile-menu-item text-danger">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </div>
+            <div class="d-grid gap-2 mt-3">
+              <a href="{% url 'payments:plan' %}" class="btn btn-outline-danger">View Plans</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-9">
+          {% block profile %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
