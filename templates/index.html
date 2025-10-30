@@ -24,13 +24,13 @@
     </div>
   </section>
 
-  <!-- Category Filter -->
+  <!-- Language Filter -->
   <div class="category-section">
     <div class="container">
       <div class="category-filter">
         <a class="category-btn active" href="{% url 'movies:search' %}">All</a>
-        {% for category in categories %}
-          <a class="category-btn" href="{% url 'movies:search' %}?categories={{ category.slug }}">{{ category.name }}</a>
+        {% for language in languages %}
+          <a class="category-btn" href="{% url 'movies:search' %}?languages={{ language.slug }}">{{ language.name }}</a>
         {% empty %}
           <span class="text-muted">No categories yet.</span>
         {% endfor %}

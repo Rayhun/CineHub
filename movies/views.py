@@ -11,7 +11,7 @@ from .models import Category, Language, Movie
 
 
 def home(request):
-    categories = Category.objects.all()
+    languages = Language.objects.filter(is_active=True).order_by("name")
     trending_movies = (
         Movie.objects.filter(is_trending=True)
         .prefetch_related("categories", "languages")
@@ -25,7 +25,7 @@ def home(request):
 
     context = {
         "active_page": "home",
-        "categories": categories,
+        "languages": languages,
         "trending_movies": trending_movies,
         "latest_movies": latest_movies,
     }
